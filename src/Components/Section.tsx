@@ -1,4 +1,18 @@
 import { ReactNode } from "react";
+import { useActiveSelector } from "../Providers/ActiveSelectorProvider";
+import { ActiveSelectorType, Dog } from "../types";
+import { useAllDogs } from "../Providers/DogProvider";
+
+const getCounts = (dogs: Dog[]) => {
+  let likedCount = 0;
+  let unlikedCount = 0;
+
+  for (const dog of dogs) {
+    dog.isFavorite ? likedCount++ : unlikedCount++;
+  }
+
+  return { likedCount, unlikedCount };
+};
 
 export const Section = ({
   label,
@@ -8,6 +22,18 @@ export const Section = ({
   label: string;
   children: ReactNode;
 }) => {
+  const { activeSelector, setActiveSelector } = useActiveSelector();
+  const { allDogs } = useAllDogs();
+  const { likedCount, unlikedCount } = getCounts(allDogs);
+
+  const setSelector = (value: ActiveSelectorType) => {
+    return activeSelector === value ? setActiveSelector("all") : setActiveSelector(value);
+  };
+
+  const setActiveClass = (value: ActiveSelectorType) => {
+    return activeSelector === value ? "active" : "";
+  };
+
   return (
     <section id="main-section">
       <div className="container-header">
@@ -15,27 +41,27 @@ export const Section = ({
         <div className="selectors">
           {/* This should display the favorited count */}
           <div
-            className={`selector ${"active"}`}
+            className={`selector ${setActiveClass("favorited")}`}
             onClick={() => {
-              alert("click favorited");
+              setSelector("favorited");
             }}
           >
-            favorited ( {0} )
+            favorited ( {likedCount} )
           </div>
 
           {/* This should display the unfavorited count */}
           <div
-            className={`selector ${""}`}
+            className={`selector ${setActiveClass("unfavorited")}`}
             onClick={() => {
-              alert("click unfavorited");
+              setSelector("unfavorited");
             }}
           >
-            unfavorited ( {10} )
+            unfavorited ( {unlikedCount} )
           </div>
           <div
-            className={`selector ${""}`}
+            className={`selector ${setActiveClass("create")}`}
             onClick={() => {
-              alert("clicked create dog");
+              setSelector("create");
             }}
           >
             create dog

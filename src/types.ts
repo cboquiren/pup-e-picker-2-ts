@@ -6,6 +6,10 @@ export const dogSchema = z.object({
   image: z.string(),
   description: z.string(),
   isFavorite: z.boolean(),
+  nickName: z.string().optional()
 });
 
 export type Dog = z.infer<typeof dogSchema>;
+
+export type ActiveSelectorType = "all" | "favorited" | "unfavorited" | "create";
+
